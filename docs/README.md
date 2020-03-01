@@ -12,7 +12,3 @@ A --> B
 B --> C
 C --> B
 ```
-
-```mermaid
-graph TD
-```
