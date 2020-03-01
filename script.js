@@ -1,6 +1,4 @@
-/* globals Docute */
-
-new Docute({
+let docute = new Docute({
   target: "#docute",
   sourcePath: "./docs/",
   nav: [
@@ -30,6 +28,17 @@ new Docute({
   ]
 });
 
+docute.pluginApi.extendMarkedRenderer(renderer => {
+  let originalRendererCode = renderer.code;
+  renderer.code = function() {
+    if (arguments[1].toLowerCase() == "mermaid") {
+      return `<mermaid-graph> ${arguments[0]} </mermaid-graph>`;
+    }
+
+    return originalRendererCode.apply(this, arguments);
+  };
+});
+
 mermaid.initialize({
   theme: "default",
   startOnLoad: false,
@@ -43,6 +52,15 @@ Vue.component("mermaid-graph", {
     </div>
   `,
   mounted() {
-    mermaid.init(undefined, this.$refs.mermaid);
+    try {
+      mermaid.init(undefined, this.$refs.mermaid);
+    } catch (e) {
+      let errorMessage = document.createElement("pre");
+      errorMessage.classList.add("error-message");
+      errorMessage.innerText = "mermaid " + e;
+      this.$refs.mermaid.innerHTML = "";
+      this.$refs.mermaid.appendChild(errorMessage);
+      console.error(e);
+    }
   }
 });

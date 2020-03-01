@@ -1,2 +1,3 @@
 # docute-template
-A simple Docute template repository 
+
+A simple Docute template repository
